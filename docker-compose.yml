@@ -1,5 +1,8 @@
 version: '3.4'
 
+volumes:
+    database:
+
 services:
     users.api:
         image: ${DOCKER_REGISTRY-}usersapi
@@ -13,3 +16,8 @@ services:
             - "3306:3306"
         environment:
             MYSQL_ROOT_PASSWORD: P@ssw0rd
+            MYSQL_DATABASE: Users
+            MYSQL_USER: user
+            MYSQL_PASSWORD: P@ssw0rd
+        volumes:
+            - database:/var/lib/mysql

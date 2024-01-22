@@ -9,16 +9,16 @@ namespace Users.Library.Services;
 
 public class UserService
 {
-    private readonly UsersDb _usersDb;
+    private readonly UsersDbContext _usersDbContext;
 
-    public UserService(UsersDb usersDb)
+    public UserService(UsersDbContext usersDbContext)
     {
-        _usersDb = usersDb;
+        _usersDbContext = usersDbContext;
     }
 
     public async Task<bool> VerifyUserPasswordAsync(Login login)
     {
-        var user = await _usersDb.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Email == login.Email && !u.IsDeleted);
+        var user = await _usersDbContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Email == login.Email && !u.IsDeleted);
 
         if (user == null)
         {
@@ -33,7 +33,7 @@ public class UserService
 
     public async Task<IList<User>> FilterUsersAsync(int[]? userIds = null, string? search = null)
     {
-        return await _usersDb
+        return await _usersDbContext
             .Users
             .Where(u =>
                 !u.IsDeleted
@@ -45,7 +45,7 @@ public class UserService
 
     public async Task<User> CreateUserAsync(CreateUser createUser)
     {
-        if (await _usersDb.Users.AnyAsync(u => u.Email == createUser.Email))
+        if (await _usersDbContext.Users.AnyAsync(u => u.Email == createUser.Email))
         {
             throw new InvalidOperationException("Email is already used!");
         }
@@ -58,40 +58,40 @@ public class UserService
             HashedPassword = passwordHasher.HashPassword(createUser.Password)
         };
 
-        _ = _usersDb.Users.Add(user);
-        _ = await _usersDb.SaveChangesAsync();
+        _ = _usersDbContext.Users.Add(user);
+        _ = await _usersDbContext.SaveChangesAsync();
 
         return user.ToDomainModel();
     }
 
     public async Task<bool> UpdateUserAsync(int userId, UpdateUser updateUser)
     {
-        var user = await _usersDb.Users.SingleOrDefaultAsync(u => u.Id == userId && !u.IsDeleted) ?? throw new InvalidOperationException("User not found!");
+        var user = await _usersDbContext.Users.SingleOrDefaultAsync(u => u.Id == userId && !u.IsDeleted) ?? throw new InvalidOperationException("User not found!");
         user.Name = updateUser.Name;
         user.Email = updateUser.Email;
         user.LastModifiedDate = DateTime.UtcNow;
-        _ = await _usersDb.SaveChangesAsync();
+        _ = await _usersDbContext.SaveChangesAsync();
 
         return true;
     }
 
     public async Task<bool> UpdateUserPasswordAsync(int userId, UpdateUserPassword updateUserPassword)
     {
-        var user = await _usersDb.Users.SingleOrDefaultAsync(u => u.Id == userId && !u.IsDeleted) ?? throw new InvalidOperationException("User not found!");
+        var user = await _usersDbContext.Users.SingleOrDefaultAsync(u => u.Id == userId && !u.IsDeleted) ?? throw new InvalidOperationException("User not found!");
         var passwordHasher = new PasswordHasher();
         user.HashedPassword = passwordHasher.HashPassword(updateUserPassword.Password);
         user.LastModifiedDate = DateTime.UtcNow;
-        _ = await _usersDb.SaveChangesAsync();
+        _ = await _usersDbContext.SaveChangesAsync();
 
         return true;
     }
 
     public async Task<bool> DeleteUserAsync(int userId)
     {
-        var user = await _usersDb.Users.SingleOrDefaultAsync(u => u.Id == userId && !u.IsDeleted) ?? throw new InvalidOperationException("User not found!");
+        var user = await _usersDbContext.Users.SingleOrDefaultAsync(u => u.Id == userId && !u.IsDeleted) ?? throw new InvalidOperationException("User not found!");
         user.IsDeleted = true;
         user.LastModifiedDate = DateTime.UtcNow;
-        _ = await _usersDb.SaveChangesAsync();
+        _ = await _usersDbContext.SaveChangesAsync();
 
         return true;
     }

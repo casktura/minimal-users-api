@@ -11,7 +11,7 @@ public class UserTest
 {
     private readonly SqliteConnection _sqliteConnection;
 
-    private readonly UsersDb _usersDb;
+    private readonly UsersDbContext _usersDbContext;
 
     private readonly UserService _userService;
 
@@ -19,14 +19,14 @@ public class UserTest
     {
         _sqliteConnection = new SqliteConnection("Filename=:memory:");
         _sqliteConnection.Open();
-        _usersDb = new UsersDb(new DbContextOptionsBuilder<UsersDb>().UseSqlite(_sqliteConnection).Options);
-        _userService = new UserService(_usersDb);
+        _usersDbContext = new UsersDbContext(new DbContextOptionsBuilder<UsersDbContext>().UseSqlite(_sqliteConnection).Options);
+        _userService = new UserService(_usersDbContext);
     }
 
     [TestInitialize]
     public async Task ClassInitialize()
     {
-        if (!await _usersDb.Database.EnsureCreatedAsync())
+        if (!await _usersDbContext.Database.EnsureCreatedAsync())
         {
             throw new Exception("Cannot create database!");
         }
