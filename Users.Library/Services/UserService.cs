@@ -18,7 +18,7 @@ public class UserService
 
     public async Task<bool> VerifyUserPasswordAsync(Login login)
     {
-        var user = await _usersDb.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == login.Email);
+        var user = await _usersDb.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Email == login.Email && !u.IsDeleted);
 
         if (user == null)
         {
@@ -31,12 +31,13 @@ public class UserService
         }
     }
 
-    public async Task<IList<User>> FilterUsersAsync(int[] userIds, string search)
+    public async Task<IList<User>> FilterUsersAsync(int[]? userIds = null, string? search = null)
     {
         return await _usersDb
             .Users
             .Where(u =>
-                (userIds.Length == 0 || userIds.Contains(u.Id))
+                !u.IsDeleted
+                && (userIds == null || userIds.Length == 0 || userIds.Contains(u.Id))
                 && (string.IsNullOrWhiteSpace(search) || u.Name.Contains(search) || u.Email.Contains(search)))
             .Select(u => u.ToDomainModel())
             .ToListAsync();
@@ -65,7 +66,7 @@ public class UserService
 
     public async Task<bool> UpdateUserAsync(int userId, UpdateUser updateUser)
     {
-        var user = await _usersDb.Users.FirstOrDefaultAsync(u => u.Id == userId) ?? throw new InvalidOperationException("User not found!");
+        var user = await _usersDb.Users.SingleOrDefaultAsync(u => u.Id == userId && !u.IsDeleted) ?? throw new InvalidOperationException("User not found!");
         user.Name = updateUser.Name;
         user.Email = updateUser.Email;
         user.LastModifiedDate = DateTime.UtcNow;
@@ -76,7 +77,7 @@ public class UserService
 
     public async Task<bool> UpdateUserPasswordAsync(int userId, UpdateUserPassword updateUserPassword)
     {
-        var user = await _usersDb.Users.FirstOrDefaultAsync(u => u.Id == userId) ?? throw new InvalidOperationException("User not found!");
+        var user = await _usersDb.Users.SingleOrDefaultAsync(u => u.Id == userId && !u.IsDeleted) ?? throw new InvalidOperationException("User not found!");
         var passwordHasher = new PasswordHasher();
         user.HashedPassword = passwordHasher.HashPassword(updateUserPassword.Password);
         user.LastModifiedDate = DateTime.UtcNow;
@@ -87,7 +88,7 @@ public class UserService
 
     public async Task<bool> DeleteUserAsync(int userId)
     {
-        var user = await _usersDb.Users.FirstOrDefaultAsync(u => u.Id == userId) ?? throw new InvalidOperationException("User not found!");
+        var user = await _usersDb.Users.SingleOrDefaultAsync(u => u.Id == userId && !u.IsDeleted) ?? throw new InvalidOperationException("User not found!");
         user.IsDeleted = true;
         user.LastModifiedDate = DateTime.UtcNow;
         _ = await _usersDb.SaveChangesAsync();
