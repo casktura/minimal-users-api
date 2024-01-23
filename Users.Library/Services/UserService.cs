@@ -16,18 +16,27 @@ public class UserService
         _usersDbContext = usersDbContext;
     }
 
-    public async Task<bool> VerifyUserPasswordAsync(Login login)
+    public async Task<LoginResult> VerifyUserPasswordAsync(Login login)
     {
         var user = await _usersDbContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Email == login.Email && !u.IsDeleted);
 
         if (user == null)
         {
-            return false;
+            return new()
+            {
+                Success = false
+            };
         }
         else
         {
             var passwordHasher = new PasswordHasher();
-            return passwordHasher.VerifyHashedPassword(user.HashedPassword, login.Password);
+            bool success = passwordHasher.VerifyHashedPassword(user.HashedPassword, login.Password);
+
+            return new()
+            {
+                Success = success,
+                User = success ? user.ToDomainModel() : null
+            };
         }
     }
 
@@ -45,7 +54,7 @@ public class UserService
 
     public async Task<User> CreateUserAsync(CreateUser createUser)
     {
-        if (await _usersDbContext.Users.AnyAsync(u => u.Email == createUser.Email))
+        if (await _usersDbContext.Users.AnyAsync(u => !u.IsDeleted && u.Email == createUser.Email))
         {
             throw new InvalidOperationException("Email is already used!");
         }

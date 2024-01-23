@@ -83,13 +83,13 @@ public class UserTest
             Password = password
         });
 
-        bool loginPassed = await _userService.VerifyUserPasswordAsync(new()
+        var loginResult = await _userService.VerifyUserPasswordAsync(new()
         {
             Email = email,
             Password = password
         });
 
-        Assert.IsTrue(loginPassed);
+        Assert.IsTrue(loginResult.Success);
     }
 
     [TestMethod]
@@ -104,13 +104,13 @@ public class UserTest
             Password = password
         });
 
-        bool loginPassed = await _userService.VerifyUserPasswordAsync(new()
+        var loginResult = await _userService.VerifyUserPasswordAsync(new()
         {
             Email = email,
             Password = password
         });
 
-        Assert.IsTrue(loginPassed);
+        Assert.IsTrue(loginResult.Success);
 
         bool updated = await _userService.UpdateUserAsync(user.Id, new()
         {
@@ -120,13 +120,13 @@ public class UserTest
 
         Assert.IsTrue(updated);
 
-        bool newLoginPassed = await _userService.VerifyUserPasswordAsync(new()
+        var newLoginResult = await _userService.VerifyUserPasswordAsync(new()
         {
             Email = newEmail,
             Password = password
         });
 
-        Assert.IsTrue(newLoginPassed);
+        Assert.IsTrue(newLoginResult.Success);
     }
 
     [TestMethod]
@@ -141,13 +141,13 @@ public class UserTest
             Password = password
         });
 
-        bool loginPassed = await _userService.VerifyUserPasswordAsync(new()
+        var loginResult = await _userService.VerifyUserPasswordAsync(new()
         {
             Email = email,
             Password = password
         });
 
-        Assert.IsTrue(loginPassed);
+        Assert.IsTrue(loginResult.Success);
 
         bool updated = await _userService.UpdateUserPasswordAsync(user.Id, new()
         {
@@ -156,13 +156,13 @@ public class UserTest
 
         Assert.IsTrue(updated);
 
-        bool newLoginPassed = await _userService.VerifyUserPasswordAsync(new()
+        var newLoginResult = await _userService.VerifyUserPasswordAsync(new()
         {
             Email = email,
             Password = newPassword
         });
 
-        Assert.IsTrue(newLoginPassed);
+        Assert.IsTrue(newLoginResult.Success);
     }
 
     [TestMethod]
@@ -206,25 +206,25 @@ public class UserTest
             Password = password
         });
 
-        bool loginPassed = await _userService.VerifyUserPasswordAsync(new()
+        var loginResult = await _userService.VerifyUserPasswordAsync(new()
         {
             Email = email,
             Password = password
         });
 
-        Assert.IsTrue(loginPassed);
+        Assert.IsTrue(loginResult.Success);
 
         bool deleted = await _userService.DeleteUserAsync(user.Id);
 
         Assert.IsTrue(deleted);
 
-        bool loginAfterDeleted = await _userService.VerifyUserPasswordAsync(new()
+        var loginAfterResult = await _userService.VerifyUserPasswordAsync(new()
         {
             Email = email,
             Password = password
         });
 
-        Assert.IsFalse(loginAfterDeleted);
+        Assert.IsFalse(loginAfterResult.Success);
 
         var users = await _userService.FilterUsersAsync([user.Id]);
 
