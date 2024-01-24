@@ -21,7 +21,7 @@ A minimal users API written in .NET (C#).
 -   There are 2 roles in applications: USER and ADMIN.
     -   Only USER can be created using the API. For ADMIN, the Role column in Users table has to be adjusted manually inside database.
 -   API permissions:
-    -   **POST** `/login` and **POST** `/users` and be access by any one.
+    -   **POST** `/login` and **POST** `/users` and be access by anyone.
         -   It's for account creation and login.
-    -   `/users/me` can be access by any USER to manage their own account data.
+    -   `/users/me` can be access by any user with any role to manage their own account data.
     -   The rest of `/users` can only access by ADMIN to manage all user account data.
