@@ -25,3 +25,8 @@ A minimal users API written in .NET (C#).
         -   It's for account creation and login.
     -   `/users/me` can be access by any user with any role to manage their own account data.
     -   The rest of `/users` can only access by ADMIN to manage all user account data.
+
+## NEED To Be Done Before Real World Use
+
+-   Move configuration variables outside of project code, into easy configurable files (appsettings.json maybe).
+-   Improve login process or use a more secure authentication library.
