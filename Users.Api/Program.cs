@@ -98,11 +98,11 @@ app.MapPost("login", async (Login login, UserService userService) =>
     }
 
     return Response.Bad();
-});
+}).Validate<Login>();
 
 var usersRouteGroup = app.MapGroup("users");
 
-usersRouteGroup.MapPost("", async (CreateUser createUser, UserService service) => Response.Ok(await service.CreateUserAsync(createUser)));
+usersRouteGroup.MapPost("", async (CreateUser createUser, UserService service) => Response.Ok(await service.CreateUserAsync(createUser))).Validate<CreateUser>();
 
 usersRouteGroup
     .MapGet("", async (string? search, UserService service) => Response.Ok(await service.FilterUsersAsync(null, search)))
@@ -114,11 +114,13 @@ usersRouteGroup
 
 usersRouteGroup
     .MapPut("{id}", async (int id, UpdateUser updateUser, UserService service) => Response.Ok(await service.UpdateUserAsync(id, updateUser)))
-    .RequireAuthorization("admin");
+    .RequireAuthorization("admin")
+    .Validate<UpdateUser>();
 
 usersRouteGroup
     .MapPut("{id}/password", async (int id, UpdateUserPassword updateUserPassword, UserService service) => Response.Ok(await service.UpdateUserPasswordAsync(id, updateUserPassword)))
-    .RequireAuthorization("admin");
+    .RequireAuthorization("admin")
+    .Validate<UpdateUserPassword>();
 
 usersRouteGroup
     .MapDelete("{id}", async (int id, UserService service) => Response.Ok(await service.DeleteUserAsync(id)))
@@ -132,11 +134,13 @@ meRouteGroup
 
 meRouteGroup
     .MapPut("", async (ClaimsPrincipal user, UpdateUser updateUser, UserService service) => Response.Ok(await service.UpdateUserAsync(user.UserId(), updateUser)))
-    .RequireAuthorization();
+    .RequireAuthorization()
+    .Validate<UpdateUser>();
 
 meRouteGroup
     .MapPut("password", async (ClaimsPrincipal user, UpdateUserPassword updateUserPassword, UserService service) => Response.Ok(await service.UpdateUserPasswordAsync(user.UserId(), updateUserPassword)))
-    .RequireAuthorization();
+    .RequireAuthorization()
+    .Validate<UpdateUserPassword>();
 
 meRouteGroup
     .MapDelete("", async (ClaimsPrincipal user, UserService service) => Response.Ok(await service.DeleteUserAsync(user.UserId())))

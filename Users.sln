@@ -9,7 +9,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "DockerCompose", "DockerComp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.Library", "Users.Library\Users.Library.csproj", "{B9FE8DB9-D7C2-4914-B233-463E60F22C3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Users.Test", "Users.Test\Users.Test.csproj", "{F80655C4-FF79-4682-B93F-AE51C0FA810E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.Test", "Users.Test\Users.Test.csproj", "{F80655C4-FF79-4682-B93F-AE51C0FA810E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{95451FF3-0284-4B14-AAB9-EE45119EFF7F}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

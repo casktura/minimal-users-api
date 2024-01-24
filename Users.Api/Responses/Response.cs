@@ -1,4 +1,6 @@
-﻿namespace Users.Api.Responses;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Users.Api.Responses;
 
 public abstract class Response
 {
@@ -17,5 +19,10 @@ public abstract class Response
     public static IResult Bad()
     {
         return Results.Ok(new BadResponse());
+    }
+
+    public static IResult InvalidModel(ICollection<ValidationResult> validationResults)
+    {
+        return Results.Ok(new BadResponse<ICollection<ValidationResult>>("ERR_INVALID_MODEL", validationResults));
     }
 }
